@@ -1,0 +1,11 @@
+---
+
+- name: prepare docker container for tasks
+  hosts: localhost
+  roles:
+    - docker
+
+- name: install environment into docker
+  hosts: docker_container
+  roles:
+    - webserver

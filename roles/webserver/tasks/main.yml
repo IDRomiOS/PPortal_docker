@@ -1,0 +1,20 @@
+---
+
+- name: install php
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libapache2-mod-php5
+    - php5
+    - php5-curl
+
+- name: install mysql
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libapache2-mod-auth-mysql
+    - mysql-client
+    - mysql-server
+    - php5-mysql

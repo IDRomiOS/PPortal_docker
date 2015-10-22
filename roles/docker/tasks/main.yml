@@ -1,0 +1,63 @@
+---
+
+- name: add docker repository key
+  sudo: yes
+  apt_key:
+    id: "58118E89F3A912897C070ADBF76221572C52609D"
+    keyserver: "hkp://p80.pool.sks-keyservers.net:80"
+    state: present
+
+- name: add docker repository and update apt cache
+  sudo: yes
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-trusty main"
+    update_cache: yes
+    state: present
+
+- name: install docker-engine
+  sudo: yes
+  apt:
+    name: "docker-engine"
+    state: present
+
+- name: install pip
+  sudo: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-dev
+    - python-pip
+
+- name: install gocker-py
+  sudo: yes
+  pip:
+    name: docker-py
+
+- name: make sure docker is running
+  sudo: yes
+  service:
+    name: docker
+    state: started
+
+- name: build docker image
+  sudo: yes
+  docker_image:
+    name: pportal
+    path: docker
+    state: build
+
+- name: ensure docker image is present
+  docker_image:
+    name: pportal
+    path: docker
+    state: present
+
+- name: create docker container
+  docker:
+    image: pportal
+    name: pportal
+    detach: False
+    expose: "22"
+    ports: "127.0.0.1:32:22"
+    state: running
